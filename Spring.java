@@ -1,53 +1,81 @@
 package com.company;
 
-public class Spring {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Spring{
     private double k;
 
     public Spring(){
-        this.k = 1.0;
+        setK(1.0);
     }
 
     public Spring(double k){
-        this.k = k;
+        setK(k);
     }
 
-    public double getStiffness(){
-        return this.k;
+    public double getK() {
+        return k;
     }
 
-    public void setStiffness(double k){
+    public void setK(double k) {
         this.k = k;
     }
 
     public double[] move(double t, double dt, double x0, double v0){
-        int n = (int) Math.ceil(t/dt);
-        double[] x = new double[n];
-        double[] v = new double[n];
+        int size = (int)(t/dt)+1;
+        double[] coordinates = new double[size];
+        double o = Math.sqrt(k);
 
-        x[0] = x0;
-        v[0] = v0;
-
-        for(int i = 1; i < n; i++){
-            double val = x[i-1]*(-this.k);
-            x[i] = x[i-1] + v[i-1]*dt;
-            v[i] = v[i-1] + val*dt;
+        for(int i = 0; i <= t; i+= dt){
+            double xi = x0 * Math.cos(o * (double)(i)) + ((v0/o) * Math.sin(o*(double)i));
+            coordinates[i] = xi;
         }
-        return x;
+        return coordinates;
     }
 
     public double[] move(double t, double dt, double x0){
-        return move(t,dt,x0,0.0);
+        int size = (int)(t/dt)+1;
+        double[] coordinates = new double[size];
+        double o = Math.sqrt(k);
+
+        for(int i = 0; i <= t; i+= dt){
+            double xi = x0 * Math.cos(o * (double)(i));
+            coordinates[i] = xi;
+        }
+        return coordinates;
     }
 
-    public double[] move(double t0, double tl, double dt, double x0, double v0){
-        //TODO
+    public double[] move(double t0, double t1, double dt, double x0, double v0){
+        int size = (int)((t1-t0)/dt) + 1;
+        double[] coordinates = new double[size];
+        double o = Math.sqrt(k);
+        int i = 0;
+
+        for(double t = t0; t <= t1; t += dt){
+            double xt = (x0 * Math.cos(o*t)) + ((v0/o)*Math.sin(o*t));
+            coordinates[i] = xt;
+            i++;
+        }
+        return coordinates;
     }
 
-    public double[] move(double t0, double tl, double dt, double x0, double v0, double m){
-        //TODO
+    public List<Double> move(double t0, double t1, double dt, double x0, double v0, double m){
+        List<Double> coordinates = new ArrayList<>();
+        double o = Math.sqrt(k/m);
+        int i = 0;
+
+        for(double t = t0; t <= t1; t += dt){
+            double xt = (x0 * Math.cos(o*t)) + ((v0/o)*Math.sin(o*t));
+            coordinates.set(i, xt);
+            i++;
+        }
+        return coordinates;
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return Double.toString(k);
+    }
 }
+
